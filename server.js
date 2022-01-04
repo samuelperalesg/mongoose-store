@@ -68,9 +68,9 @@ app.get('/items/:_id/edit', (req, res) => {
 
 // =========Trouble with getting show page to show=================
 // SHOW
-app.get('/items/:_id', (req, res) => {
+app.get('/items/:id', (req, res) => {
 	Item.findById(req.params.id, (err, foundItem) => {
-		res.render('show', {
+		res.render('show.ejs', {
 			item: foundItem, 
 		});
 	});
