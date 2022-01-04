@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+	</head>
+	<body>
+    <nav>
+      <a href="/items/new">Add A New Item</a>
+    </nav>
+		<h1>Shop Index Page</h1>
+		<ul>
+			<% items.forEach(item => { %>
+      <li>
+        <a href="/items/<%=item._id %>"> <%=item.name; %> </a>
+      </li>
+			<% }) %>
+		</ul>
+	</body>
+</html>
