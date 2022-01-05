@@ -5,6 +5,7 @@ const morgan = require("morgan")
 const mongoose = require("mongoose")
 const PORT = process.env.PORT
 const Item = require('./models/items')
+const methodOverride = require("method-override")
 
 // initialize the express app
 const app = express()
@@ -40,15 +41,24 @@ app.get('/items/new', (req, res) => {
 })
 
 // DELETE
-app.delete('/items/:_id', (req, res) => {
-  Item.splice(req.params._id, 1)
-  res.redirect('/items')
+app.delete('/items/:id', (req, res) => {
+  Item.findByIdAndDelete(req.params.id, (err, data) => {
+    res.redirect('/items')
+  })
 })
 
 // UPDATE
-app.put('/items/:_id', (req, res) => {
-  Item[req.params._id] = req.body
-  res.redirect('/items')
+app.put('/items/:id', (req, res) => {
+  Item.findOneAndUpdate(
+    req.params.id,
+    req.body,
+    {
+      new: true,
+    },
+    (err, updatedItem) => {
+      res.redirect(`/items/${req.params.id}`)
+    }
+  )
 })
 
 // CREATE
@@ -59,14 +69,14 @@ app.post('/items', (req, res) => {
 });
 
 // EDIT
-app.get('/items/:_id/edit', (req, res) => {
-  res.render('edit.ejs', {
-    singleItem: Item[req.params._id],
-    index: req.params._id
+app.get('/items/:id/edit', (req, res) => {
+  Item.findById(req.params.id, (err, foundItem) => {
+    res.render("edit.ejs", {
+      item: foundItem,
+    })
   })
 })
 
-// =========Trouble with getting show page to show=================
 // SHOW
 app.get('/items/:id', (req, res) => {
 	Item.findById(req.params.id, (err, foundItem) => {
