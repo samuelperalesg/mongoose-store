@@ -3,10 +3,10 @@ const Schema = mongoose.Schema
 
 const itemSchema = new Schema ({
   name: {type: String, required: true},
-  description: {type: String, required: true},
-  img: {type: String, required: true},
-  price: {type: Number, required: true},
-  qty: {type: Number, required: true},
+  description: {type: String},
+  img: {type: String},
+  price: {type: String},
+  qty: {type: Number, },
 })
 
 const Item = mongoose.model('Item', itemSchema)

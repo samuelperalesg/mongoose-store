@@ -12,11 +12,17 @@
 		<h1><%=item.name %></h1>
 		Description: <%= item.description%>
 		<br />
-		Price: <%= item.completed %>	
+		Price: $<%= item.price %>	
 		<br />
 		Qty: <%= item.qty %>
 		<br />
-		IMG: <img src="<%= item.img %>">
+		<img src="<%= item.img %>">
+
+		<form action="/items/<%= item._id %>/buy?_method=PUT" method="POST">
+			<input type="submit" value="BUY">
+		</form>
+
+		<a href="/items/<%=item._id %>/edit">Edit</a>
 	
 	</body>
     </html>

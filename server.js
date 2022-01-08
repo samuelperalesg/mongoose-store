@@ -1,11 +1,12 @@
 // require our dependencies
 const express = require("express")
-require('dotenv').config()
-const morgan = require("morgan")
 const mongoose = require("mongoose")
-const PORT = process.env.PORT
+const morgan = require("morgan")
 const Item = require('./models/items')
 const methodOverride = require("method-override")
+const itemSeed = require('./models/itemSeed')
+
+require('dotenv').config()
 
 // initialize the express app
 const app = express()
@@ -14,17 +15,42 @@ const app = express()
 app.use(morgan('dev'))
 
 // establish a connection to MongoDB
-const db = mongoose.connection
 mongoose.connect(process.env.DATABASE_URL)
+const db = mongoose.connection
 
-db.on('error', (err) => console.log(`${err.message} is mongo not running?`))
-db.on('connected', () => console.log('mongo connected'))
-db.on('disconnected', () => console.log('mongo disconnected'))
+db
+  .on('error', (err) => console.log(`${err.message} is mongo not running?`))
+  .on('connected', () => console.log('mongo connected'))
+  .on('disconnected', () => console.log('mongo disconnected'))
 
 // mount middleware
 app.use(express.urlencoded({ extended: true }))
+app.use(morgan('dev'))
+app.use(methodOverride('_method'))
 
 // mount our routes
+
+// SEED
+app.get('/items/seed', (req, res) => {
+  Item.deleteMany({}, (err, allItems) => { })
+
+  Item.create(itemSeed, (err, data) => {
+    res.redirect('/items')
+  })
+})
+
+// BUY
+app.put('/items/:id/buy', (req, res) => {
+  Item.updateOne({
+    _id: req.params.id
+  },
+  {
+    $inc: {'qty':-1}
+  },
+  (error, updatedItem) => {
+    res.redirect(`/items/${req.params.id}`)
+  })
+})
 
 // INDEX
 app.get('/items', (req, res) => {
@@ -48,22 +74,22 @@ app.delete('/items/:id', (req, res) => {
 })
 
 // UPDATE
-app.put('/items/:id', (req, res) => {
-  Item.findOneAndUpdate(
-    req.params.id,
-    req.body,
-    {
-      new: true,
-    },
-    (err, updatedItem) => {
-      res.redirect(`/items/${req.params.id}`)
-    }
+app.put("/items/:id", (req, res) => {
+  Item.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      {
+          new: true,
+      },
+      (error, updatedItem)=>{
+          res.redirect(`/items/${req.params.id}`)
+      }
   )
 })
 
 // CREATE
 app.post('/items', (req, res) => {
-	Item.create(req.body, (error, createdItem) => {
+	Item.create(req.body, (err, createdItem) => {
     res.redirect('/items');
   });
 });
@@ -86,5 +112,9 @@ app.get('/items/:id', (req, res) => {
 	});
 });
 
+// BUY
+
+
+
 // tell the server to listen for requests from the client
-app.listen(PORT, () => console.log(`server is listening on port: ${PORT}`))
+app.listen(process.env.PORT, () => console.log(`server is listening on port: ${process.env.PORT}`))

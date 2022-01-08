@@ -12,7 +12,13 @@
 		<ul>
 			<% items.forEach(item => { %>
       <li>
-        <a href="/items/<%=item._id %>"> <%=item.name; %> </a>
+        <a href="/items/<%=item._id %>"> <img src="<%= item.img %>" alt=""> </a>
+
+				<form action="/items/<%= item.id %>?_method=DELETE" method="POST" style="display:inline; margin-left:16px;">
+					<input type="submit" value="DELETE" />
+			</form>
+
+			<a href="/items/<%=item._id %>/edit">Edit</a>
       </li>
 			<% }) %>
 		</ul>
