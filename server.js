@@ -24,6 +24,7 @@ db
   .on('disconnected', () => console.log('mongo disconnected'))
 
 // mount middleware
+app.use(express.static('public'))
 app.use(express.urlencoded({ extended: true }))
 app.use(morgan('dev'))
 app.use(methodOverride('_method'))
@@ -112,7 +113,6 @@ app.get('/items/:id', (req, res) => {
 	});
 });
 
-// BUY
 
 
 
